@@ -423,9 +423,10 @@ h1,h2,h3{text-wrap:balance}
 /* brasas do CTA final atrás do conteúdo */
 .cta-final>h2,.cta-final>p,.cta-final>.btn-row,.cta-final>.cta-fine{position:relative;z-index:1}
 #bwember{position:absolute;inset:0;z-index:0;pointer-events:none}
-/* lobo correndo na barra de progresso */
-#progWolf{position:fixed;top:-3px;left:0;z-index:3001;width:22px;height:22px;pointer-events:none;opacity:0;transition:opacity .3s,left .1s linear;filter:drop-shadow(0 0 6px rgba(45,108,255,.8))}
-#progWolf.show{opacity:1}
+/* fundo ambiente: malha + brilhos da marca + estrelas (parallax no scroll) */
+body::before{content:'';position:fixed;inset:0;z-index:-2;pointer-events:none;background-image:linear-gradient(rgba(31,35,45,.2) 1px,transparent 1px),linear-gradient(90deg,rgba(31,35,45,.2) 1px,transparent 1px);background-size:64px 64px;-webkit-mask-image:radial-gradient(ellipse 95% 95% at 50% 40%,#000 20%,transparent 100%);mask-image:radial-gradient(ellipse 95% 95% at 50% 40%,#000 20%,transparent 100%)}
+body::after{content:'';position:fixed;inset:0;z-index:-2;pointer-events:none;background:radial-gradient(640px 420px at 88% 10%,rgba(45,108,255,.075),transparent 65%),radial-gradient(520px 380px at 4% 48%,rgba(255,59,71,.05),transparent 65%),radial-gradient(760px 520px at 94% 86%,rgba(45,108,255,.06),transparent 65%)}
+#bwstars{position:fixed;inset:0;z-index:-1;pointer-events:none}
 /* brilho radial atrás dos títulos das seções Solução e Ambiente */
 #solucao,#ambiente{position:relative;overflow:hidden}
 #solucao::before,#ambiente::before{content:'';position:absolute;left:50%;top:-90px;width:720px;height:380px;transform:translateX(-50%);background:radial-gradient(ellipse,rgba(45,108,255,.09),transparent 70%);pointer-events:none}
@@ -1547,24 +1548,44 @@ setInterval(function(){document.querySelectorAll('.tv').forEach(function(el){el.
     eBuild();
   }
 
-  /* 5) Lobo correndo na barra de progresso do topo */
-  var prog=document.getElementById('prog');
-  if(prog&&!reduce){
-    var pw=document.createElement('div');pw.id='progWolf';
-    pw.innerHTML='<svg viewBox="0 0 1232 1275" fill="#5b8dff" width="22" height="22"><path fill-rule="evenodd" d="M431,868 616,1274 800,868 617,976Z M0,0 37,599 491,810 616,731 741,810 1200,596 1231,0 953,462 618,569 278,462Z M924,662 726,731 825,585Z M307,662 406,585 505,731Z"/></svg>';
-    document.body.appendChild(pw);
-    var pwTick=false;
-    window.addEventListener('scroll',function(){
-      if(pwTick)return;pwTick=true;
-      requestAnimationFrame(function(){
-        var s=window.scrollY,tot=document.documentElement.scrollHeight-window.innerHeight;
-        var pct=tot>0?s/tot*100:0;
-        pw.style.left='calc('+pct.toFixed(2)+'% - 11px)';
-        pw.classList.toggle('show',s>120);
-        pwTick=false;
-      });
-    },{passive:true});
-  }
+  /* 5) Campo de estrelas fixo atrás da página: cintila e faz parallax com o scroll */
+  (function(){
+    var cv=document.createElement('canvas');cv.id='bwstars';document.body.appendChild(cv);
+    var ctx=cv.getContext('2d');if(!ctx)return;
+    var DPR=Math.min(window.devicePixelRatio||1,1.4);
+    var W=0,H=0,stars=[],run=false;
+    function build(){
+      W=window.innerWidth;H=window.innerHeight;
+      cv.width=W*DPR;cv.height=H*DPR;cv.style.width=W+'px';cv.style.height=H+'px';
+      ctx.setTransform(DPR,0,0,DPR,0,0);
+      var n=W<760?55:110;stars=[];
+      for(var i=0;i<n;i++){
+        var r=Math.random();
+        stars.push({x:Math.random()*W,y:Math.random()*H,z:0.25+Math.random()*0.75,
+          s:0.6+Math.random()*1.4,ph:Math.random()*6.283,tw:0.4+Math.random()*0.9,
+          c:r<0.12?'255,59,71':r<0.5?'143,179,255':'215,228,255'});
+      }
+    }
+    function paint(t){
+      ctx.clearRect(0,0,W,H);
+      var sc=window.scrollY;
+      for(var i=0;i<stars.length;i++){
+        var p=stars[i];
+        var y=p.y-sc*p.z*0.14;y=((y%H)+H)%H;
+        var a=(0.14+0.3*(0.5+0.5*Math.sin(t*0.001*p.tw+p.ph)))*p.z;
+        ctx.globalAlpha=a;
+        ctx.fillStyle='rgb('+p.c+')';
+        ctx.fillRect(p.x,y,p.s,p.s);
+      }
+      ctx.globalAlpha=1;
+    }
+    function frame(t){ if(!run)return;paint(t);requestAnimationFrame(frame); }
+    function maybe(){ var want=!document.hidden&&!reduce; if(want&&!run){run=true;requestAnimationFrame(frame);} if(!want)run=false; }
+    document.addEventListener('visibilitychange',maybe);
+    var srz;window.addEventListener('resize',function(){clearTimeout(srz);srz=setTimeout(build,280);});
+    build();
+    if(reduce){paint(0);}else{maybe();}
+  })();
 
   /* 6) Luz suave que acompanha o cursor (desktop) */
   if(fine&&!reduce){
