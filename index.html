@@ -398,6 +398,32 @@ h1,h2,h3{text-wrap:balance}
   .hero h1 .hr{background:linear-gradient(100deg,#ff6b74,#FF3B47 45%,#ff8b93 70%,#FF3B47);background-size:220% 100%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:hshift 7s linear infinite}
 }
 @keyframes hshift{to{background-position:220% 0}}
+/* ── BW SCENES — cenas vivas por toda a página ── */
+.hero h1{animation:none;perspective:800px}
+.hero h1 .w{display:inline-block;animation:wIn .8s var(--ease) both}
+@keyframes wIn{from{opacity:0;transform:translateY(.55em) rotateX(38deg)}to{opacity:1;transform:none}}
+/* timeline que acende conforme o scroll */
+.tl-line{transform-origin:top}
+.tl-item .tl-n{transition:box-shadow .45s,border-color .45s,color .45s,transform .45s var(--ease)}
+.tl-item.lit .tl-n{transform:scale(1.08)}
+.tl-item.lit .tl-n.off{border-color:var(--blue);color:var(--blue-l);box-shadow:0 0 18px rgba(45,108,255,.45)}
+.tl-item .tl-t{transition:color .4s}
+.tl-item.lit .tl-t{color:var(--blue-l)}
+/* plano destaque com borda viva girando (fallback: borda gradiente estática) */
+@property --bang{syntax:'<angle>';initial-value:0deg;inherits:false}
+.plan-c.best{border:1.5px solid transparent;background:linear-gradient(180deg,#141a2e 0%,#0E1016 55%) padding-box,conic-gradient(from var(--bang),rgba(45,108,255,.95),rgba(255,59,71,.6) 22%,rgba(45,108,255,.16) 45%,rgba(45,108,255,.55) 70%,rgba(45,108,255,.95)) border-box;animation:bang 5s linear infinite}
+.plan-c.best:hover{border-color:transparent}
+@keyframes bang{to{--bang:360deg}}
+.hero h1 .hb .w,.hero h1 .hr .w{background:inherit;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+/* brasas do CTA final atrás do conteúdo */
+.cta-final>h2,.cta-final>p,.cta-final>.btn-row,.cta-final>.cta-fine{position:relative;z-index:1}
+#bwember{position:absolute;inset:0;z-index:0;pointer-events:none}
+/* lobo correndo na barra de progresso */
+#progWolf{position:fixed;top:-3px;left:0;z-index:3001;width:22px;height:22px;pointer-events:none;opacity:0;transition:opacity .3s,left .1s linear;filter:drop-shadow(0 0 6px rgba(45,108,255,.8))}
+#progWolf.show{opacity:1}
+/* luz que acompanha o cursor (desktop) */
+#cursorGlow{position:fixed;left:0;top:0;width:560px;height:560px;border-radius:50%;background:radial-gradient(circle,rgba(45,108,255,.065),transparent 62%);pointer-events:none;z-index:2;mix-blend-mode:screen;transform:translate(-50%,-50%);will-change:transform}
+@media(hover:none),(pointer:coarse){#cursorGlow{display:none}}
 /* ── RESPONSIVE ── */
 @media(max-width:900px){
   .nav-links,.nav-cta{display:none}.ham{display:flex}
@@ -991,12 +1017,18 @@ document.querySelectorAll('a[href^="#"]').forEach(function(a){
   });
 });
 
-// ── REVEAL (with immediate fallback) ──
-setTimeout(function(){document.querySelectorAll('.anim').forEach(function(el){el.classList.add('vis')})},2200);
-var io=new IntersectionObserver(function(entries){
-  entries.forEach(function(e){if(e.isIntersecting){e.target.classList.add('vis');io.unobserve(e.target)}});
-},{threshold:0.1,rootMargin:'0px 0px -30px 0px'});
-document.querySelectorAll('.anim').forEach(function(el){io.observe(el)});
+// ── REVEAL (replay: anima de novo SEMPRE que o elemento volta para a tela) ──
+if(!('IntersectionObserver' in window)){
+  setTimeout(function(){document.querySelectorAll('.anim').forEach(function(el){el.classList.add('vis')})},400);
+}else{
+  var io=new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting)e.target.classList.add('vis');
+      else e.target.classList.remove('vis');
+    });
+  },{threshold:0.12,rootMargin:'0px 0px -30px 0px'});
+  document.querySelectorAll('.anim').forEach(function(el){io.observe(el)});
+}
 setTimeout(function(){
   document.querySelectorAll('.hero .anim,.eyebrow-pill,.hero h1,.hero-sub,.btn-row,.risk-note,.trust-row').forEach(function(el){el.classList.add('vis')});
 },120);
@@ -1004,22 +1036,62 @@ setTimeout(function(){
 // ── HUD BARS ──
 setTimeout(function(){var bm=document.getElementById('bm'),bl=document.getElementById('bl');if(bm)bm.style.width='68%';if(bl)bl.style.width='22%';},1000);
 
-// ── CHAOS CHART ──
-function drawChaos(){
-  var c=document.getElementById('cc');if(!c)return;
-  var ctx=c.getContext('2d'),W=Math.max(c.parentElement.clientWidth-44,200),H=200;
+// ── CHAOS CHART (a linha se DESENHA ao entrar na tela; redesenha a cada volta) ──
+var ccData=null,ccRaf=null;
+var ccReduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+function ccBuild(){
+  var c=document.getElementById('cc');if(!c)return null;
+  var W=Math.max(c.parentElement.clientWidth-44,200),H=200;
   c.width=W;c.height=H;
   var pts=[],y=H*.18;
   for(var i=0;i<70;i++){var sp=(Math.random()-.62)*13;y=Math.max(H*.05,Math.min(H*.9,y+sp+2));pts.push({x:(i/69)*W,y:y})}
-  var g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,'rgba(255,59,71,.28)');g.addColorStop(1,'rgba(255,59,71,0)');
-  ctx.beginPath();ctx.moveTo(pts[0].x,pts[0].y);pts.forEach(function(p){ctx.lineTo(p.x,p.y)});ctx.lineTo(W,H);ctx.lineTo(0,H);ctx.closePath();ctx.fillStyle=g;ctx.fill();
-  ctx.beginPath();ctx.moveTo(pts[0].x,pts[0].y);pts.forEach(function(p){ctx.lineTo(p.x,p.y)});ctx.strokeStyle='#FF3B47';ctx.lineWidth=2;ctx.stroke();
-  for(var gi=1;gi<4;gi++){ctx.beginPath();ctx.moveTo(0,(H/4)*gi);ctx.lineTo(W,(H/4)*gi);ctx.strokeStyle='rgba(255,255,255,.05)';ctx.lineWidth=1;ctx.stroke()}
+  return {c:c,W:W,H:H,pts:pts};
 }
-setTimeout(drawChaos,300);window.addEventListener('resize',drawChaos);
+function ccPaint(d,prog){
+  var ctx=d.c.getContext('2d'),W=d.W,H=d.H;
+  ctx.clearRect(0,0,W,H);
+  for(var gi=1;gi<4;gi++){ctx.beginPath();ctx.moveTo(0,(H/4)*gi);ctx.lineTo(W,(H/4)*gi);ctx.strokeStyle='rgba(255,255,255,.05)';ctx.lineWidth=1;ctx.stroke()}
+  var n=Math.max(2,Math.round(d.pts.length*prog)),sub=d.pts.slice(0,n),lp=sub[n-1];
+  var g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,'rgba(255,59,71,.28)');g.addColorStop(1,'rgba(255,59,71,0)');
+  ctx.beginPath();ctx.moveTo(sub[0].x,sub[0].y);sub.forEach(function(p){ctx.lineTo(p.x,p.y)});ctx.lineTo(lp.x,H);ctx.lineTo(0,H);ctx.closePath();ctx.fillStyle=g;ctx.fill();
+  ctx.beginPath();ctx.moveTo(sub[0].x,sub[0].y);sub.forEach(function(p){ctx.lineTo(p.x,p.y)});ctx.strokeStyle='#FF3B47';ctx.lineWidth=2;ctx.stroke();
+  if(prog<1){
+    ctx.beginPath();ctx.arc(lp.x,lp.y,8,0,6.2832);ctx.fillStyle='rgba(255,59,71,.22)';ctx.fill();
+    ctx.beginPath();ctx.arc(lp.x,lp.y,3.5,0,6.2832);ctx.fillStyle='#FF3B47';ctx.fill();
+  }
+}
+function drawChaos(animate){
+  var d=ccBuild();if(!d)return;ccData=d;
+  if(ccRaf)cancelAnimationFrame(ccRaf);
+  if(!animate||ccReduce){ccPaint(d,1);return}
+  var t0=performance.now();
+  (function step(now){
+    var p=Math.min(1,(now-t0)/1800);
+    ccPaint(d,p);
+    if(p<1)ccRaf=requestAnimationFrame(step);
+  })(t0);
+}
+setTimeout(function(){drawChaos(false)},300);
+window.addEventListener('resize',function(){drawChaos(false)});
+if('IntersectionObserver' in window){
+  var ccBox=document.querySelector('.chart-box');
+  if(ccBox)new IntersectionObserver(function(e){ if(e[0].isIntersecting)drawChaos(true); },{threshold:.35}).observe(ccBox);
+}
 
-// ── COUNTERS ──
-var cnt=false,cio=new IntersectionObserver(function(e){if(e[0].isIntersecting&&!cnt){cnt=true;document.querySelectorAll('[data-n]').forEach(function(el){var t=parseInt(el.dataset.n),s=el.dataset.s||'',c=0,i=t/112;var tm=setInterval(function(){c=Math.min(c+i,t);el.textContent=Math.floor(c)+s;if(c>=t)clearInterval(tm)},16)});cio.disconnect()}},{threshold:.4});
+// ── COUNTERS (recontam toda vez que a faixa volta para a tela) ──
+var cntTimers=[];
+function runCounters(){
+  cntTimers.forEach(clearInterval);cntTimers=[];
+  document.querySelectorAll('[data-n]').forEach(function(el){
+    var t=parseInt(el.dataset.n),s=el.dataset.s||'',c=0,i=t/112;
+    var tm=setInterval(function(){c=Math.min(c+i,t);el.textContent=Math.floor(c)+s;if(c>=t)clearInterval(tm)},16);
+    cntTimers.push(tm);
+  });
+}
+var cio=new IntersectionObserver(function(e){
+  if(e[0].isIntersecting){runCounters();}
+  else{cntTimers.forEach(clearInterval);cntTimers=[];document.querySelectorAll('[data-n]').forEach(function(el){el.textContent='0'+(el.dataset.s||'')});}
+},{threshold:.4});
 var sb=document.querySelector('.stats-band');if(sb)cio.observe(sb);
 
 // ── PLAN TOGGLE ──
@@ -1352,6 +1424,154 @@ setInterval(function(){document.querySelectorAll('.tv').forEach(function(el){el.
     });
     el.addEventListener('pointerleave',function(){ el.style.transform=''; });
   });
+})();
+</script>
+
+<script>
+/* ══ BW SCENES — bloco NOVO e ISOLADO: cenas vivas em toda a página ══
+   Título palavra por palavra · timeline que acende com o scroll · HUD que
+   rearma · brasas no CTA final · lobo na barra de progresso · luz do cursor */
+(function(){
+  'use strict';
+  var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var fine=window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+  /* 1) Título do hero: cada palavra sobe em cascata (mantém spans/cores) */
+  if(!reduce){
+    var h1=document.querySelector('.hero h1');
+    if(h1){
+      var idx=0;
+      function splitWords(node){
+        var kids=Array.prototype.slice.call(node.childNodes);
+        kids.forEach(function(ch){
+          if(ch.nodeType===3){
+            var words=ch.textContent.split(/(\s+)/),frag=document.createDocumentFragment();
+            words.forEach(function(wd){
+              if(/^\s+$/.test(wd)||wd===''){frag.appendChild(document.createTextNode(wd));return;}
+              var sp=document.createElement('span');sp.className='w';sp.textContent=wd;
+              sp.style.animationDelay=(0.12+idx*0.085)+'s';idx++;
+              frag.appendChild(sp);
+            });
+            node.replaceChild(frag,ch);
+          } else if(ch.nodeType===1&&ch.tagName!=='BR'){
+            splitWords(ch);
+          }
+        });
+      }
+      splitWords(h1);
+    }
+  }
+
+  /* 2) Timeline "Como funciona": a linha cresce e os passos acendem com o scroll (nos 2 sentidos) */
+  var tl=document.querySelector('.tl'),tlLine=document.querySelector('.tl-line');
+  var tlItems=Array.prototype.slice.call(document.querySelectorAll('.tl-item'));
+  var tlTick=false;
+  function tlUpdate(){
+    if(!tl||!tlLine)return;
+    var r=tl.getBoundingClientRect(),vh=window.innerHeight;
+    var p=Math.max(0,Math.min(1,(vh*0.72-r.top)/(r.height*0.92)));
+    tlLine.style.transform='scaleY('+p.toFixed(3)+')';
+    var reach=r.top+p*r.height;
+    tlItems.forEach(function(it){
+      var ir=it.getBoundingClientRect();
+      it.classList.toggle('lit',ir.top+26<=reach);
+    });
+  }
+  if(tl&&!reduce){
+    window.addEventListener('scroll',function(){
+      if(tlTick)return;tlTick=true;
+      requestAnimationFrame(function(){tlUpdate();tlTick=false;});
+    },{passive:true});
+    tlUpdate();
+  }
+
+  /* 3) HUD do hero: barras de meta/limite rearmam toda vez que o HUD volta à tela */
+  var hud=document.querySelector('.hud');
+  if(hud&&'IntersectionObserver' in window&&!reduce){
+    new IntersectionObserver(function(e){
+      var bm=document.getElementById('bm'),bl=document.getElementById('bl');
+      if(e[0].isIntersecting){ setTimeout(function(){ if(bm)bm.style.width='68%'; if(bl)bl.style.width='22%'; },350); }
+      else{ if(bm)bm.style.width='0'; if(bl)bl.style.width='0'; }
+    },{threshold:.4}).observe(hud);
+  }
+
+  /* 4) CTA final: brasas subindo (azuis e vermelhas) atrás do texto */
+  var cta=document.querySelector('.cta-final');
+  if(cta&&!reduce&&window.requestAnimationFrame){
+    var ec=document.createElement('canvas');ec.id='bwember';cta.insertBefore(ec,cta.firstChild);
+    var ectx=ec.getContext('2d'),eW=0,eH=0,embers=[],eRun=false,eVis=false;
+    var eDPR=Math.min(window.devicePixelRatio||1,1.4);
+    function eBuild(){
+      var r=cta.getBoundingClientRect();eW=r.width;eH=r.height;
+      ec.width=eW*eDPR;ec.height=eH*eDPR;ec.style.width=eW+'px';ec.style.height=eH+'px';
+      ectx.setTransform(eDPR,0,0,eDPR,0,0);
+      var n=(!fine||eW<760)?45:100;
+      embers=[];
+      for(var i=0;i<n;i++)embers.push(mkEmber(true));
+    }
+    function mkEmber(any){
+      return {x:Math.random()*eW,y:any?Math.random()*eH:eH+8,
+        s:0.8+Math.random()*1.8,v:0.25+Math.random()*0.55,
+        drift:Math.random()*6.283,da:0.004+Math.random()*0.008,
+        red:Math.random()<0.3,a:0.25+Math.random()*0.55};
+    }
+    function eFrame(){
+      if(!eRun)return;
+      ectx.clearRect(0,0,eW,eH);
+      for(var i=0;i<embers.length;i++){
+        var p=embers[i];
+        p.y-=p.v;p.drift+=p.da;p.x+=Math.sin(p.drift)*0.4;
+        if(p.y<-8)embers[i]=p=mkEmber(false);
+        var fade=Math.min(1,(eH-p.y)/120)*Math.min(1,p.y/60+0.2);
+        ectx.globalAlpha=Math.max(0,p.a*fade);
+        ectx.fillStyle=p.red?'#FF3B47':'#2D6CFF';
+        ectx.fillRect(p.x,p.y,p.s,p.s);
+      }
+      ectx.globalAlpha=1;
+      requestAnimationFrame(eFrame);
+    }
+    function eMaybe(){ var want=eVis&&!document.hidden; if(want&&!eRun){eRun=true;requestAnimationFrame(eFrame);} if(!want)eRun=false; }
+    if('IntersectionObserver' in window){
+      new IntersectionObserver(function(e){eVis=e[0].isIntersecting;eMaybe();},{threshold:0}).observe(cta);
+    } else { eVis=true;eMaybe(); }
+    document.addEventListener('visibilitychange',eMaybe);
+    var eRsz;window.addEventListener('resize',function(){clearTimeout(eRsz);eRsz=setTimeout(eBuild,280);});
+    eBuild();
+  }
+
+  /* 5) Lobo correndo na barra de progresso do topo */
+  var prog=document.getElementById('prog');
+  if(prog&&!reduce){
+    var pw=document.createElement('div');pw.id='progWolf';
+    pw.innerHTML='<svg viewBox="0 0 1232 1275" fill="#5b8dff" width="22" height="22"><path fill-rule="evenodd" d="M431,868 616,1274 800,868 617,976Z M0,0 37,599 491,810 616,731 741,810 1200,596 1231,0 953,462 618,569 278,462Z M924,662 726,731 825,585Z M307,662 406,585 505,731Z"/></svg>';
+    document.body.appendChild(pw);
+    var pwTick=false;
+    window.addEventListener('scroll',function(){
+      if(pwTick)return;pwTick=true;
+      requestAnimationFrame(function(){
+        var s=window.scrollY,tot=document.documentElement.scrollHeight-window.innerHeight;
+        var pct=tot>0?s/tot*100:0;
+        pw.style.left='calc('+pct.toFixed(2)+'% - 11px)';
+        pw.classList.toggle('show',s>120);
+        pwTick=false;
+      });
+    },{passive:true});
+  }
+
+  /* 6) Luz suave que acompanha o cursor (desktop) */
+  if(fine&&!reduce){
+    var cg=document.createElement('div');cg.id='cursorGlow';document.body.appendChild(cg);
+    var gx=-999,gy=-999,cx=-999,cy=-999,gRun=false;
+    window.addEventListener('pointermove',function(e){
+      gx=e.clientX;gy=e.clientY;
+      if(!gRun){gRun=true;requestAnimationFrame(gStep);}
+    },{passive:true});
+    function gStep(){
+      cx+=(gx-cx)*0.14;cy+=(gy-cy)*0.14;
+      cg.style.transform='translate('+(cx-280).toFixed(1)+'px,'+(cy-280).toFixed(1)+'px)';
+      if(Math.abs(gx-cx)+Math.abs(gy-cy)>0.5)requestAnimationFrame(gStep);else gRun=false;
+    }
+  }
 })();
 </script>
 </body>
