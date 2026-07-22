@@ -26,7 +26,7 @@
 <meta name="twitter:description" content="O robô que opera com disciplina absoluta no seu MT5. Sem emoção, sem hesitação, sem erro humano.">
 <meta name="twitter:image" content="https://blackwolfea.com/og-image.png">
 <!-- Dados estruturados (Product/Organization) -->
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"Product","name":"Black Wolf","description":"Robô de trading automatizado (Expert Advisor) para MetaTrader 5, focado em XAUUSD.","brand":{"@type":"Brand","name":"Black Wolf"},"category":"Trading Software","manufacturer":{"@type":"Organization","name":"Gold Strategists LLC","url":"https://blackwolfea.com/"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Product","name":"Black Wolf","description":"Robô de trading automatizado (Expert Advisor) para MetaTrader 5, focado em XAUUSD.","brand":{"@type":"Brand","name":"Black Wolf"},"category":"Trading Software","manufacturer":{"@type":"Organization","name":"Gold Strategists LLC","url":"https://blackwolfea.com/"},"offers":{"@type":"AggregateOffer","priceCurrency":"USD","lowPrice":"197.90","highPrice":"500","offerCount":"4","availability":"https://schema.org/InStock","url":"https://blackwolfea.com/#planos"}}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
@@ -97,7 +97,7 @@ nav.solid{background:rgba(8,9,12,.96);backdrop-filter:blur(18px);border-color:va
 .btn-red:hover{background:#f02030;transform:translateY(-2px);box-shadow:0 8px 34px rgba(255,59,71,.5)}
 .btn-ghost{background:transparent;color:var(--text);padding:16px 34px;border-radius:8px;font-family:var(--fh);font-weight:600;font-size:.95rem;border:1px solid var(--bord);transition:all .25s}
 .btn-ghost:hover{border-color:var(--blue);color:var(--blue);background:rgba(45,108,255,.06)}
-.risk-note{font-size:.7rem;color:var(--muted);opacity:.75;max-width:460px;margin:0 auto 22px;position:relative;z-index:1}
+.risk-note{font-size:.82rem;color:var(--text);max-width:460px;margin:0 auto 22px;position:relative;z-index:1}
 .trust-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:44px;position:relative;z-index:1}
 .tbadge{display:flex;align-items:center;gap:7px;background:rgba(255,255,255,.04);border:1px solid var(--bord);padding:7px 14px;border-radius:100px;font-family:var(--fm);font-size:.62rem;color:var(--muted);letter-spacing:.07em}
 /* ── HUD ── */
@@ -487,7 +487,7 @@ body::after{content:'';position:fixed;inset:0;z-index:-2;pointer-events:none;bac
 </head>
 <body>
 
-<a href="#planos" class="skip-link">Ir para os planos</a>
+<a href="#home" class="skip-link">Ir para o conteúdo</a>
 <div id="prog"></div>
 <a href="#planos" class="float-c" id="fltCta">🐺 Quero Acesso</a>
 <a href="https://wa.me/12292961795" target="_blank" rel="noopener noreferrer" class="whatsapp-btn" id="waBnt" aria-label="Suporte via WhatsApp">
@@ -720,7 +720,7 @@ body::after{content:'';position:fixed;inset:0;z-index:-2;pointer-events:none;bac
     </div>
     <div class="tgl-row anim">
       <span class="tgl-lbl on" id="la">Sou aluno Black Wolf</span>
-      <button class="tgl-sw" id="tsw" onclick="tgl()" role="switch" aria-checked="true" aria-label="Sou aluno Black Wolf (alternar preços de aluno)"><div class="tgl-k"></div></button>
+      <button class="tgl-sw" id="tsw" onclick="tgl()" role="switch" aria-checked="false" aria-label="Sou aluno Black Wolf (alternar preços de aluno)"><div class="tgl-k"></div></button>
       <span class="tgl-lbl" id="le">Não sou aluno</span>
     </div>
     <div id="vb">
@@ -792,7 +792,8 @@ body::after{content:'';position:fixed;inset:0;z-index:-2;pointer-events:none;bac
         <div></div>
       </div>
     </div>
-    <p style="text-align:center;font-size:.72rem;color:var(--muted);margin-top:26px;opacity:.65">Cart&atilde;o de cr&eacute;dito/d&eacute;bito via Stripe · Cancele a qualquer momento · Acesso mantido at&eacute; o fim do per&iacute;odo pago · <a href="#refund" onclick="showLegal('refund');return false" style="color:var(--blue);cursor:pointer">Política de Reembolso</a></p>
+    <p style="text-align:center;font-size:.8rem;color:var(--text);margin-top:26px;max-width:640px;margin-left:auto;margin-right:auto">⚠️ <b>Aviso de risco:</b> operar mercados alavancados envolve risco elevado e pode levar à perda total do capital. O Black Wolf é uma ferramenta de automação — <b>não garante lucro</b> nem constitui recomendação de investimento. Resultados passados não garantem resultados futuros.</p>
+    <p style="text-align:center;font-size:.72rem;color:var(--muted);margin-top:12px">Cart&atilde;o de cr&eacute;dito/d&eacute;bito via Stripe · Cancele a qualquer momento · Acesso mantido at&eacute; o fim do per&iacute;odo pago · <a href="#refund" onclick="showLegal('refund');return false" style="color:var(--blue);cursor:pointer">Política de Reembolso</a></p>
   </div>
 </section>
 
@@ -1127,8 +1128,11 @@ if('IntersectionObserver' in window){
 var cntTimers=[];
 function runCounters(){
   cntTimers.forEach(clearInterval);cntTimers=[];
+  var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   document.querySelectorAll('[data-n]').forEach(function(el){
-    var t=parseInt(el.dataset.n),s=el.dataset.s||'',c=0,i=t/112;
+    var t=parseInt(el.dataset.n),s=el.dataset.s||'';
+    if(reduce){el.textContent=t+s;return;}   // sem animação p/ quem pede movimento reduzido
+    var c=0,i=t/112;
     var tm=setInterval(function(){c=Math.min(c+i,t);el.textContent=Math.floor(c)+s;if(c>=t)clearInterval(tm)},16);
     cntTimers.push(tm);
   });
@@ -1141,7 +1145,7 @@ var sb=document.querySelector('.stats-band');if(sb)cio.observe(sb);
 
 // ── PLAN TOGGLE ──
 var isA=true;
-function tgl(){isA=!isA;var sw=document.getElementById('tsw');sw.classList.toggle('on',!isA);sw.setAttribute('aria-checked',isA?'true':'false');document.getElementById('la').classList.toggle('on',isA);document.getElementById('le').classList.toggle('on',!isA);document.getElementById('pa').style.display=isA?'block':'none';document.getElementById('pe').style.display=isA?'none':'block';var vb=document.getElementById('vb');if(vb)vb.style.display=isA?'block':'none';}
+function tgl(){isA=!isA;var sw=document.getElementById('tsw');sw.classList.toggle('on',!isA);sw.setAttribute('aria-checked',!isA?'true':'false');document.getElementById('la').classList.toggle('on',isA);document.getElementById('le').classList.toggle('on',!isA);document.getElementById('pa').style.display=isA?'block':'none';document.getElementById('pe').style.display=isA?'none':'block';var vb=document.getElementById('vb');if(vb)vb.style.display=isA?'block':'none';}
 
 // ── MODAL (removido — os botões de plano vão direto ao Stripe) ──
 function closeModal(){var m=document.getElementById('modalBg');if(m)m.classList.remove('open');document.body.style.overflow='';}
