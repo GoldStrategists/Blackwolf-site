@@ -118,6 +118,22 @@ nav.solid{background:rgba(7,8,11,.96);backdrop-filter:blur(18px);border-color:va
 .tbadge{display:flex;align-items:center;gap:7px;background:rgba(255,255,255,.04);border:1px solid var(--bord);padding:7px 14px;border-radius:100px;font-family:var(--fm);font-size:.6rem;color:var(--t2);letter-spacing:.06em;transition:border-color .3s,color .3s,background .3s}
 .tbadge:hover{border-color:rgba(45,108,255,.4);color:var(--t1);background:rgba(45,108,255,.06)}
 
+/* ── HERO CHART (leitura do XAUUSD) ── */
+.hero-chart{width:100%;max-width:760px;margin:40px auto 0;background:var(--s2,var(--s1));border:1px solid var(--bord);border-radius:16px;padding:20px 22px;box-shadow:0 0 60px rgba(45,108,255,.06),0 32px 64px rgba(0,0,0,.5);position:relative;z-index:1;text-align:left}
+.hero-chart::before{content:'';position:absolute;top:-1px;left:24px;right:24px;height:1px;background:linear-gradient(90deg,transparent,var(--blue),transparent)}
+.hc-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.hc-lbl{font-family:var(--fm);font-size:.64rem;color:var(--blue);letter-spacing:.1em}
+.hc-live{display:flex;align-items:center;gap:6px;font-family:var(--fm);font-size:.6rem;color:var(--green)}
+.hc-ldot{width:6px;height:6px;background:var(--green);border-radius:50%;animation:pdot 1.4s ease-in-out infinite}
+.hero-chart canvas{display:block;width:100%;height:150px}
+.hc-foot{display:flex;justify-content:space-between;margin-top:6px;font-family:var(--fm);font-size:.6rem;color:var(--t3)}
+
+/* ── STAT STRIP (count-up) ── */
+.stat-strip{background:var(--s1);border-top:1px solid var(--bord);border-bottom:1px solid var(--bord);padding:40px 6%}
+.stat-g{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;max-width:860px;margin:0 auto;text-align:center}
+.stat-n{font-family:var(--fm);font-size:clamp(1.7rem,3.6vw,2.4rem);font-weight:700;color:var(--blue);line-height:1;margin-bottom:6px;text-shadow:0 0 26px rgba(45,108,255,.3)}
+.stat-l{font-size:.78rem;color:var(--t2)}
+
 /* ── SECTIONS ── */
 .sec{position:relative;padding:100px 6%}
 .inner{max-width:1100px;margin:0 auto}
@@ -143,6 +159,7 @@ nav.solid{background:rgba(7,8,11,.96);backdrop-filter:blur(18px);border-color:va
 .dor-list li{display:flex;gap:10px;font-size:.85rem;color:var(--t2);padding:9px 0;border-bottom:1px solid var(--bord);align-items:flex-start;line-height:1.55}
 .dor-list li:last-child{border:none}
 .dor-list li span.mk{flex-shrink:0}
+.dor-chart{width:100%;height:64px;display:block;margin-bottom:18px;border-radius:8px}
 
 /* ── MÉTODO CARDS ── */
 .met-g{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:46px}
@@ -156,7 +173,8 @@ nav.solid{background:rgba(7,8,11,.96);backdrop-filter:blur(18px);border-color:va
 
 /* ── CURRÍCULO (timeline) ── */
 .tl{max-width:720px;margin:50px auto 0;position:relative}
-.tl-line{position:absolute;left:24px;top:24px;bottom:24px;width:2px;background:linear-gradient(180deg,var(--blue) 0%,rgba(45,108,255,.06) 100%);border-radius:2px}
+.tl-line{position:absolute;left:24px;top:24px;bottom:24px;width:2px;background:rgba(45,108,255,.1);border-radius:2px;overflow:hidden}
+.tl-fill{position:absolute;left:0;top:0;width:100%;height:0;background:linear-gradient(180deg,var(--blue),var(--blue-l));border-radius:2px;transition:height .12s linear;box-shadow:0 0 10px rgba(45,108,255,.6)}
 .tl-item{display:flex;gap:22px;align-items:flex-start;margin-bottom:30px;position:relative}
 .tl-item:last-child{margin-bottom:0}
 .tl-n{width:48px;height:48px;min-width:48px;border-radius:50%;background:var(--s1);border:2px solid var(--bord);display:flex;align-items:center;justify-content:center;font-family:var(--fm);font-weight:700;font-size:.85rem;z-index:1;flex-shrink:0;color:var(--t2)}
@@ -190,8 +208,12 @@ nav.solid{background:rgba(7,8,11,.96);backdrop-filter:blur(18px);border-color:va
 
 /* ── PREÇO / OFERTA ── */
 .plans-sec{background:var(--s1)}
-.price-card{max-width:520px;margin:46px auto 0;background:var(--s2);border:1px solid var(--blue);border-radius:18px;padding:38px;position:relative;overflow:hidden;box-shadow:0 0 60px rgba(45,108,255,.1)}
+.price-wrap{max-width:520px;margin:46px auto 0;perspective:1200px}
+.price-card{background:var(--s2);border:1px solid var(--blue);border-radius:18px;padding:38px;position:relative;overflow:hidden;box-shadow:0 0 60px rgba(45,108,255,.1);transform:rotateX(0) rotateY(0);transition:transform .4s var(--ease),box-shadow .4s var(--ease);transform-style:preserve-3d;will-change:transform}
+.price-card.tilt{transition:transform .08s linear}
 .price-card::before{content:'';position:absolute;top:-1px;left:24px;right:24px;height:1px;background:linear-gradient(90deg,transparent,var(--blue),transparent)}
+.price-card::after{content:'';position:absolute;inset:0;border-radius:inherit;opacity:0;transition:opacity .4s;background:radial-gradient(320px circle at var(--px,50%) var(--py,50%),rgba(45,108,255,.14),transparent 60%);pointer-events:none}
+.price-card.tilt::after{opacity:1}
 .bonus-tag{display:inline-flex;align-items:center;gap:8px;background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.32);padding:7px 16px;border-radius:100px;font-family:var(--fm);font-size:.66rem;color:var(--amber);letter-spacing:.06em;margin-bottom:22px}
 .price-name{font-family:var(--fh);font-weight:700;font-size:1.15rem;margin-bottom:6px}
 .price-tag{font-family:var(--fm);font-size:2.6rem;font-weight:700;color:var(--t1);line-height:1;margin:14px 0 4px}
@@ -328,7 +350,26 @@ footer{background:var(--s1);border-top:1px solid var(--bord);padding:56px 6% 36p
     <div class="tbadge">🎁 Meses grátis do robô Black Wolf</div>
     <div class="tbadge">🏢 Gold Strategists LLC · Florida, USA</div>
   </div>
+
+  <div class="hero-chart anim">
+    <div class="hc-top">
+      <span class="hc-lbl">◈ LEITURA DO XAUUSD — ilustração didática</span>
+      <span class="hc-live"><span class="hc-ldot"></span>MÉTODO</span>
+    </div>
+    <canvas id="heroChart" width="720" height="150" aria-hidden="true"></canvas>
+    <div class="hc-foot"><span>Sem método: entradas soltas, sem regra</span><span>Com método: risco definido, saída no alvo</span></div>
+  </div>
 </section>
+
+<!-- ══ STAT STRIP ══ -->
+<div class="stat-strip">
+  <div class="stat-g">
+    <div><div class="stat-n" data-count="7">0</div><div class="stat-l">Aulas diretas</div></div>
+    <div><div class="stat-n" data-count="1">0</div><div class="stat-l">Mês grátis do robô</div></div>
+    <div><div class="stat-n" data-count="7">0</div><div class="stat-l">Dias de garantia</div></div>
+    <div><div class="stat-n" data-count="1" data-suffix="x">0</div><div class="stat-l">Pagamento único</div></div>
+  </div>
+</div>
 
 <!-- ══ 3 · DOR / DILEMA ══ -->
 <section class="sec" id="dor">
@@ -339,6 +380,7 @@ footer{background:var(--s1);border-top:1px solid var(--bord);padding:56px 6% 36p
   </div>
   <div class="inner dor-g">
     <div class="dor-c no anim">
+      <canvas class="dor-chart" id="chaosChart" width="500" height="128" aria-hidden="true"></canvas>
       <div class="dor-h no">✗ Sem método</div>
       <ul class="dor-list">
         <li><span class="mk">✗</span> Entra na operação por impulso ou "sensação"</li>
@@ -348,6 +390,7 @@ footer{background:var(--s1);border-top:1px solid var(--bord);padding:56px 6% 36p
       </ul>
     </div>
     <div class="dor-c yes anim">
+      <canvas class="dor-chart" id="methodChart" width="500" height="128" aria-hidden="true"></canvas>
       <div class="dor-h yes">✓ Com o método Black Wolf</div>
       <ul class="dor-list">
         <li><span class="mk">✓</span> Lê o contexto do XAUUSD antes de qualquer entrada</li>
@@ -398,8 +441,8 @@ footer{background:var(--s1);border-top:1px solid var(--bord);padding:56px 6% 36p
     <p class="sec-sub center">Direto ao ponto, sem enrolação. As aulas 4 e 5 são o núcleo do método.</p>
   </div>
   <div class="inner">
-    <div class="tl">
-      <div class="tl-line"></div>
+    <div class="tl" id="tlWrap">
+      <div class="tl-line"><div class="tl-fill" id="tlFill"></div></div>
       <div class="tl-item anim">
         <div class="tl-n">1</div>
         <div class="tl-body">
@@ -508,7 +551,8 @@ footer{background:var(--s1);border-top:1px solid var(--bord);padding:56px 6% 36p
     <p class="sec-sub center">Sem mensalidade. Sem letra miúda.</p>
   </div>
 
-  <div class="price-card anim">
+  <div class="price-wrap anim">
+  <div class="price-card" id="priceCard">
     <div class="bonus-tag">🎁 Bônus: 1 mês grátis do robô Black Wolf</div>
     <div class="price-name">Curso Black Wolf</div>
     <!-- Bloco de preço: trocar apenas o valor abaixo caso a pesquisa de mercado ajuste para $399 -->
@@ -524,6 +568,7 @@ footer{background:var(--s1);border-top:1px solid var(--bord);padding:56px 6% 36p
     <!-- TODO: substituir pelo Payment Link real do Stripe (produto "Curso Black Wolf", metadata.product=curso) -->
     <a href="https://buy.stripe.com/SEU_LINK_AQUI" class="btn-red price-cta">🎓 Quero o curso agora</a>
     <div class="price-secure">🔒 Pagamento processado com segurança pelo Stripe</div>
+  </div>
   </div>
 
   <div class="guar-box anim">
@@ -676,6 +721,189 @@ document.querySelectorAll('.met-c').forEach(function(el){
     el.style.setProperty('--my',(e.clientY-r.top)+'px');
   });
 });
+
+// ── util: canvas DPR setup ──
+var REDUCE_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+function fitCanvas(cv){
+  var dpr=Math.min(window.devicePixelRatio||1,2), r=cv.getBoundingClientRect();
+  var w=Math.max(r.width,1), h=Math.max(r.height||cv.height,1);
+  cv.width=w*dpr; cv.height=h*dpr;
+  var ctx=cv.getContext('2d'); ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {ctx:ctx,w:w,h:h};
+}
+
+// ── HERO: candlestick de leitura do XAUUSD ──
+(function(){
+  var cv=document.getElementById('heroChart'); if(!cv) return;
+  function seededRand(seed){ var s=seed; return function(){ s=(s*9301+49297)%233280; return s/233280; }; }
+  var rnd=seededRand(2026), candles=[], price=100, n=34;
+  for(var i=0;i<n;i++){
+    var drift=(i/n)*22 - 3, open=price;
+    var vol=4+rnd()*6;
+    var close=open + (rnd()-0.46)*vol + drift*0.06;
+    var high=Math.max(open,close)+rnd()*3;
+    var low=Math.min(open,close)-rnd()*3;
+    candles.push({o:open,h:high,l:low,c:close});
+    price=close;
+  }
+  var vals=[]; candles.forEach(function(c){vals.push(c.h,c.l)});
+  var vmin=Math.min.apply(null,vals), vmax=Math.max.apply(null,vals);
+  function draw(progress){
+    var f=fitCanvas(cv), ctx=f.ctx, w=f.w, h=f.h, pad=8;
+    ctx.clearRect(0,0,w,h);
+    var visible=Math.max(1,Math.round(candles.length*progress));
+    var cw=w/candles.length;
+    function y(v){ return h-pad - ((v-vmin)/(vmax-vmin))*(h-pad*2); }
+    // grid
+    ctx.strokeStyle='rgba(148,155,172,.08)'; ctx.lineWidth=1;
+    for(var g=0;g<3;g++){ var gy=pad+(h-pad*2)*(g/2); ctx.beginPath(); ctx.moveTo(0,gy); ctx.lineTo(w,gy); ctx.stroke(); }
+    var maPts=[];
+    for(var i=0;i<visible;i++){
+      var c=candles[i], x=i*cw+cw*0.5;
+      var up=c.c>=c.o;
+      ctx.strokeStyle=up?'#22C55E':'#FF3B47';
+      ctx.fillStyle=up?'#22C55E':'#FF3B47';
+      ctx.lineWidth=1;
+      ctx.beginPath(); ctx.moveTo(x,y(c.h)); ctx.lineTo(x,y(c.l)); ctx.stroke();
+      var bw=Math.max(cw*0.42,2);
+      var yo=y(c.o), yc=y(c.c);
+      ctx.fillRect(x-bw/2, Math.min(yo,yc), bw, Math.max(Math.abs(yc-yo),1.5));
+      maPts.push([x,(y(c.o)+y(c.c))/2]);
+    }
+    if(maPts.length>2){
+      ctx.strokeStyle='rgba(45,108,255,.85)'; ctx.lineWidth=1.6; ctx.beginPath();
+      var win=5;
+      for(var k=0;k<maPts.length;k++){
+        var s=Math.max(0,k-win), sum=0, cnt=0;
+        for(var j=s;j<=k;j++){ sum+=maPts[j][1]; cnt++; }
+        var py=sum/cnt;
+        if(k===0) ctx.moveTo(maPts[k][0],py); else ctx.lineTo(maPts[k][0],py);
+      }
+      ctx.stroke();
+    }
+  }
+  var drawn=false;
+  function animateIn(){
+    if(drawn) return; drawn=true;
+    if(REDUCE_MOTION){ draw(1); return; }
+    var start=performance.now(), dur=1400;
+    function step(now){
+      var p=Math.min(1,(now-start)/dur);
+      draw(1-Math.pow(1-p,3));
+      if(p<1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+  draw(1); drawn=false;
+  var io=new IntersectionObserver(function(entries){ entries.forEach(function(e){ if(e.isIntersecting) animateIn(); }); },{threshold:.3});
+  io.observe(cv);
+  window.addEventListener('resize', function(){ draw(1); }, {passive:true});
+})();
+
+// ── DOR: mini-gráficos comparativos (achismo vs método) ──
+(function(){
+  var chaos=document.getElementById('chaosChart'), method=document.getElementById('methodChart');
+  if(!chaos||!method) return;
+  function seededRand(seed){ var s=seed; return function(){ s=(s*9301+49297)%233280; return s/233280; }; }
+  function drawChaos(progress){
+    var f=fitCanvas(chaos), ctx=f.ctx, w=f.w, h=f.h, pad=10;
+    ctx.clearRect(0,0,w,h);
+    var rnd=seededRand(7), n=26, pts=[], v=h*0.5;
+    for(var i=0;i<n;i++){ v += (rnd()-0.5)*h*0.62; v=Math.max(pad,Math.min(h-pad,v)); pts.push(v); }
+    var visible=Math.max(2,Math.round(n*progress));
+    ctx.strokeStyle='#FF3B47'; ctx.lineWidth=1.8; ctx.beginPath();
+    for(var i=0;i<visible;i++){ var x=(i/(n-1))*w; if(i===0) ctx.moveTo(x,pts[i]); else ctx.lineTo(x,pts[i]); }
+    ctx.stroke();
+    ctx.fillStyle='rgba(255,59,71,.06)'; ctx.lineTo((visible-1)/(n-1)*w,h); ctx.lineTo(0,h); ctx.closePath(); ctx.fill();
+  }
+  function drawMethod(progress){
+    var f=fitCanvas(method), ctx=f.ctx, w=f.w, h=f.h, pad=10;
+    ctx.clearRect(0,0,w,h);
+    var n=7, pts=[]; var base=h-pad;
+    for(var i=0;i<n;i++){ pts.push(base - (i/(n-1))*(h-pad*2)*0.85); }
+    var visible=Math.max(2,Math.round(n*progress));
+    ctx.strokeStyle='#2D6CFF'; ctx.lineWidth=2; ctx.beginPath();
+    for(var i=0;i<visible;i++){ var x=(i/(n-1))*w;
+      if(i===0) ctx.moveTo(x,pts[i]);
+      else { var xp=((i-1)/(n-1))*w, mx=(xp+x)/2; ctx.lineTo(mx,pts[i-1]); ctx.lineTo(x,pts[i]); }
+    }
+    ctx.stroke();
+    ctx.fillStyle='rgba(45,108,255,.08)'; ctx.lineTo((visible-1)/(n-1)*w,h); ctx.lineTo(0,h); ctx.closePath(); ctx.fill();
+    ctx.fillStyle='#2D6CFF';
+    for(var i=0;i<visible;i++){ var x=(i/(n-1))*w; ctx.beginPath(); ctx.arc(x,pts[i],2.6,0,Math.PI*2); ctx.fill(); }
+  }
+  var done=false;
+  function animate(){
+    if(done) return; done=true;
+    if(REDUCE_MOTION){ drawChaos(1); drawMethod(1); return; }
+    var start=performance.now(), dur=1100;
+    function step(now){
+      var p=Math.min(1,(now-start)/dur), e=1-Math.pow(1-p,3);
+      drawChaos(e); drawMethod(e);
+      if(p<1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+  drawChaos(1); drawMethod(1); done=false;
+  var io=new IntersectionObserver(function(entries){ entries.forEach(function(e){ if(e.isIntersecting) animate(); }); },{threshold:.4});
+  io.observe(chaos);
+  window.addEventListener('resize', function(){ drawChaos(1); drawMethod(1); }, {passive:true});
+})();
+
+// ── STAT STRIP: contagem animada ──
+(function(){
+  var nums=document.querySelectorAll('.stat-n'); if(!nums.length) return;
+  function run(el){
+    var target=parseFloat(el.getAttribute('data-count')||'0'), suf=el.getAttribute('data-suffix')||'';
+    if(REDUCE_MOTION){ el.textContent=target+suf; return; }
+    var start=performance.now(), dur=900;
+    function step(now){
+      var p=Math.min(1,(now-start)/dur), e=1-Math.pow(1-p,3);
+      el.textContent=Math.round(target*e)+suf;
+      if(p<1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+  var io=new IntersectionObserver(function(entries){
+    entries.forEach(function(e){ if(e.isIntersecting){ run(e.target); io.unobserve(e.target); } });
+  },{threshold:.6});
+  nums.forEach(function(n){ io.observe(n); });
+})();
+
+// ── CURRÍCULO: linha de progresso no scroll ──
+(function(){
+  var wrap=document.getElementById('tlWrap'), fill=document.getElementById('tlFill');
+  if(!wrap||!fill) return;
+  function update(){
+    var r=wrap.getBoundingClientRect(), vh=window.innerHeight;
+    var total=r.height, start=vh*0.75, traveled=start-r.top;
+    var pct=Math.max(0,Math.min(1, traveled/(total+start-vh*0.25)));
+    fill.style.height=(pct*100)+'%';
+  }
+  window.addEventListener('scroll', update, {passive:true});
+  window.addEventListener('resize', update, {passive:true});
+  update();
+})();
+
+// ── PREÇO: tilt 3D sutil no card ──
+(function(){
+  var card=document.getElementById('priceCard'); if(!card) return;
+  var coarse=window.matchMedia('(pointer: coarse)').matches;
+  if(REDUCE_MOTION||coarse) return;
+  card.addEventListener('pointermove', function(e){
+    var r=card.getBoundingClientRect();
+    var px=(e.clientX-r.left)/r.width, py=(e.clientY-r.top)/r.height;
+    var rx=(0.5-py)*10, ry=(px-0.5)*10;
+    card.classList.add('tilt');
+    card.style.transform='rotateX('+rx+'deg) rotateY('+ry+'deg) translateZ(0)';
+    card.style.setProperty('--px',(px*100)+'%');
+    card.style.setProperty('--py',(py*100)+'%');
+  });
+  card.addEventListener('pointerleave', function(){
+    card.classList.remove('tilt');
+    card.style.transform='rotateX(0) rotateY(0)';
+  });
+})();
 </script>
 
 <!-- ── Tolt (afiliados) + wiring do Stripe ── -->
