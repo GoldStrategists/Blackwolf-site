@@ -484,8 +484,6 @@ body::after{content:'';position:fixed;inset:0;z-index:-2;pointer-events:none;bac
   .anim{opacity:1!important;transform:none!important}
 }
 </style>
-<!-- Tolt: rastreio de afiliados -->
-<script async src="https://files.tlt-cdn.com/tlt.js" data-tolt="pk_YEyi2U8ArD2SR3zBApLDrYE1"></script>
 </head>
 <body>
 
@@ -1665,27 +1663,6 @@ setInterval(function(){if(document.hidden)return;document.querySelectorAll('.tv'
       if(Math.abs(gx-cx)+Math.abs(gy-cy)>0.5)requestAnimationFrame(gStep);else gRun=false;
     }
   }
-})();
-</script>
-<!-- Tolt: anexa a indicação (client_reference_id) aos links de compra da Stripe (Payment Links) -->
-<script>
-(function(){
-  function withRef(base){
-    var ref = window.tolt_referral;
-    if(!ref) return base;
-    return base + (base.indexOf('?') > -1 ? '&' : '?') + 'client_reference_id=' + encodeURIComponent(ref);
-  }
-  function wire(){
-    var links = document.querySelectorAll('a[href^="https://buy.stripe.com/"]');
-    for (var i = 0; i < links.length; i++) {
-      (function(a){
-        var base = a.getAttribute('href').split('?')[0].split('#')[0];
-        a.addEventListener('click', function(){ a.href = withRef(base); }, false);
-      })(links[i]);
-    }
-  }
-  if (document.readyState !== 'loading') wire();
-  else document.addEventListener('DOMContentLoaded', wire);
 })();
 </script>
 </body>
