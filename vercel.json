@@ -1,4 +1,10 @@
 {
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://blackwolf-api.contact-1f3.workers.dev/api/:path*"
+    }
+  ],
   "headers": [
     {
       "source": "/(.*)",
