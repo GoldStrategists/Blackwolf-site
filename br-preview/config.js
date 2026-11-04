@@ -1,0 +1,1 @@
+window.ORVENTO_CONFIG = Object.freeze({brand:'ORVENTO',market:'BR',currency:'BRL',preview:true,checkoutEnabled:false,panelUrl:'https://painel.blackwolfea.com',courseUrl:'https://curso.blackwolfea.com',offers:[{id:'br_essencial',name:'Essencial',price:null},{id:'br_automacao',name:'Automação',price:null},{id:'br_comunidade',name:'Comunidade',price:null}]});
